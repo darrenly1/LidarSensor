@@ -134,7 +134,7 @@
             text-align: center;
             font-size: 32px;
             font-weight: bold;
-            margin-top: 20px;
+            margin-top: 60px;
             color: white;
         }
 
@@ -173,7 +173,7 @@
         const canvas = document.getElementById('simulationCanvas');
         const ctx = canvas.getContext('2d');
         canvas.width = 800;
-        canvas.height = 600;
+        canvas.height = 450;
 
         const BACKGROUND_COLOR = 'rgb(30, 30, 30)';
         const SENSOR_COLOR = 'rgb(0, 255, 0)';
@@ -185,10 +185,10 @@
 
         let sensor = { x: canvas.width / 2, y: canvas.height / 2, radius: 10 };
         const obstacles = [
-            { x: 650, y: 250, width: 50, height: 100 },
-            { x: 150, y: 420, width: 50, height: 100 },
+            { x: 550, y: 250, width: 50, height: 100 },
+            { x: 150, y: 300, width: 50, height: 100 },
             { x: 300, y: 100, width: 60, height: 120 },
-            { x: 500, y: 400, width: 80, height: 60 },
+            { x: 500, y: 350, width: 80, height: 60 },
             { x: 200, y: 200, width: 120, height: 40 },
             { x: 0, y: 0, width: canvas.width, height: 5 },
             { x: 0, y: canvas.height - 5, width: canvas.width, height: 5 },
