@@ -22,32 +22,38 @@
             border: 1px solid white;
         }
         #controls {
-            margin-top: 20px;
+            margin-top: 10px;
             display: flex;
-            gap: 10px;
+            gap: 5px;
         }
         #runButton {
             background-color: green;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 3px;
         }
         #stopButton {
             background-color: red;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 3px;
+        }
+        #resetButton {
+            background-color: blue;
+            color: white;
+            border: none;
+            border-radius: 3px;
         }
         #controls button {
-            padding: 10px 20px;
-            font-size: 16px;
+            padding: 5px 10px; /* Smaller padding */
+            font-size: 12px;   /* Smaller font size */
             cursor: pointer;
         }
         #tableContainer {
-            margin-top: 20px;
+            margin-top: 10px;
             width: 80%;
             max-width: 800px;
-            max-height: 300px; 
+            max-height: 200px; 
             overflow-y: auto;
             border: 1px solid white;
         }
@@ -57,8 +63,9 @@
         }
         #dataTable th, #dataTable td {
             border: 1px solid white;
-            padding: 8px;
+            padding: 5px;
             text-align: center;
+            font-size: 12px; /* Smaller font size */
         }
         #dataTable th {
             background-color: #444;
@@ -69,86 +76,66 @@
             align-items: center;
             margin-top: 10px;
             position: relative;
-            width: 150px;
-            height: 150px;
+            width: 100px; /* Smaller D-Pad */
+            height: 100px;
             background-color: #444;
             border-radius: 50%;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
-
-        #dpad div {
-            display: flex;
-            gap: 10px;
-            position: absolute;
-        }
-
         #dpad button {
-            width: 50px;
-            height: 50px;
-            font-size: 24px;
+            width: 30px;       /* Smaller width */
+            height: 30px;      /* Smaller height */
+            font-size: 14px;   /* Smaller font size */
             text-align: center;
             border: none;
             background-color: #666;
             color: white;
             border-radius: 50%;
             cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2); /* Smaller shadow */
             transition: background-color 0.2s, transform 0.1s;
         }
-
         #dpad button:hover {
             background-color: #888;
             transform: scale(1.1);
         }
-
         #dpad button:active {
             transform: scale(0.95);
         }
-
         #moveUp {
             position: absolute;
             top: 0;
         }
-
         #moveDown {
             position: absolute;
             bottom: 0;
         }
-
         #moveLeft {
             position: absolute;
             left: 0;
             top: 33%;
         }
-
         #moveRight {
             position: absolute;
             right: 0;
             top: 33%;
         }
-
-        #dpad button:hover {
-            background-color: #888;
-        }
         #title {
             text-align: center;
-            font-size: 32px;
+            font-size: 24px; /* Smaller title */
             font-weight: bold;
-            margin-top: 60px;
+            margin-top: 20px;
             color: white;
         }
-
     </style>
 </head>
 <body>
-    <h1 id="title">LiDar Sensor Simulation</h1>
+    <h1 id="title">LiDAR Sensor Simulation</h1>
     <canvas id="simulationCanvas"></canvas>
     <div id="controls">
-        <button id="runButton">Run Simulation</button>
+        <button id="runButton">Run</button>
         <button id="stopButton">Stop</button>
         <button id="resetButton">Reset</button>
-    
-        <!-- D-Pad Layout -->
         <div id="dpad">
             <button id="moveUp">↑</button>
             <button id="moveLeft">←</button>
@@ -198,11 +185,9 @@
         let marks = [];
         let currentLaser = 0;
         let isRunning = false;
-        let isPaused = false; // New state to track if the simulation is paused
+        let isPaused = false;
         let extendStep = 0;
         let retractStep = 0;
-
-        // Array to store laser data (distance, angle)
         let laserData = [];
 
         const tableBody = document.querySelector('#dataTable tbody');
@@ -259,17 +244,16 @@
             marks = [];
             currentLaser = 0;
             isRunning = false;
-            isPaused = false; // Reset pause state
+            isPaused = false;
             laserData = [];
             extendStep = 0;
             retractStep = 0;
 
-            // Reset sensor position to the center
             sensor.x = canvas.width / 2;
             sensor.y = canvas.height / 2;
 
             const runButton = document.getElementById('runButton');
-            runButton.textContent = 'Run Simulation';
+            runButton.textContent = 'Run';
             runButton.disabled = false;
 
             redrawCanvas();
@@ -277,8 +261,6 @@
 
         function updateTable() {
             tableBody.innerHTML = '';
-
-            // Add rows for each laser data entry
             laserData.forEach(entry => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -293,7 +275,7 @@
         }
 
         function animate() {
-            if (!isRunning || isPaused) return; // Stop animation if paused
+            if (!isRunning || isPaused) return;
 
             redrawCanvas();
 
@@ -303,38 +285,27 @@
                 const cosAngle = Math.cos(angle);
                 const sinAngle = Math.sin(angle);
 
-                // **Laser extending**
                 if (extendStep < distance) {
                     extendStep += STEP_SIZE;
-
-                    // Calculate the current laser endpoint
                     const laserXStep = sensor.x + cosAngle * extendStep;
                     const laserYStep = sensor.y + sinAngle * extendStep;
 
-                    // Draw the laser
                     ctx.beginPath();
                     ctx.moveTo(sensor.x, sensor.y);
                     ctx.lineTo(laserXStep, laserYStep);
                     ctx.strokeStyle = LASER_COLOR;
                     ctx.stroke();
-                }
-                // **Laser retracting**
-                else if (retractStep < distance) {
+                } else if (retractStep < distance) {
                     retractStep += STEP_SIZE;
-
-                    // Calculate the current laser retraction point
                     const laserXStep = x - cosAngle * retractStep;
                     const laserYStep = y - sinAngle * retractStep;
 
-                    // Draw the laser
                     ctx.beginPath();
                     ctx.moveTo(x, y);
                     ctx.lineTo(laserXStep, laserYStep);
                     ctx.strokeStyle = LASER_COLOR;
                     ctx.stroke();
-                }
-                // **Move to the next laser**
-                else {
+                } else {
                     if (distance < LASER_LENGTH) {
                         marks.push({ x, y });
                     }
@@ -350,8 +321,8 @@
                     updateTable();
                 }
             } else {
-                isRunning = false; // Stop simulation when all lasers are cast
-                runButton.textContent = 'Run Simulation';
+                isRunning = false;
+                runButton.textContent = 'Run';
                 runButton.disabled = false;
                 return;
             }
@@ -363,12 +334,12 @@
         runButton.addEventListener('click', () => {
             if (!isRunning) {
                 isRunning = true;
-                isPaused = false; // Ensure simulation is not paused
+                isPaused = false;
                 runButton.textContent = 'Running...';
                 runButton.disabled = true;
                 animate();
             } else if (isPaused) {
-                isPaused = false; // Resume simulation
+                isPaused = false;
                 runButton.textContent = 'Running...';
                 runButton.disabled = true;
                 animate();
@@ -378,8 +349,8 @@
         const stopButton = document.getElementById('stopButton');
         stopButton.addEventListener('click', () => {
             if (isRunning) {
-                isPaused = true; // Pause simulation
-                runButton.textContent = 'Resume Simulation';
+                isPaused = true;
+                runButton.textContent = 'Resume';
                 runButton.disabled = false;
             }
         });
