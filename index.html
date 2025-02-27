@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LiDAR Simulation</title>
     <style>
-        /* Made Smaller Buttons and Window For Standard*/
         body {
             margin: 0;
             overflow: hidden;
@@ -46,8 +45,8 @@
             border-radius: 3px;
         }
         #controls button {
-            padding: 5px 10px; /* Smaller padding */
-            font-size: 12px;   /* Smaller font size */
+            padding: 5px 10px;
+            font-size: 12px;
             cursor: pointer;
         }
         #tableContainer {
@@ -66,7 +65,7 @@
             border: 1px solid white;
             padding: 5px;
             text-align: center;
-            font-size: 12px; /* Smaller font size */
+            font-size: 12px;
         }
         #dataTable th {
             background-color: #444;
@@ -77,23 +76,23 @@
             align-items: center;
             margin-top: 10px;
             position: relative;
-            width: 100px; /* Smaller D-Pad */
+            width: 100px;
             height: 100px;
             background-color: #444;
             border-radius: 50%;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
         #dpad button {
-            width: 30px;       /* Smaller width */
-            height: 30px;      /* Smaller height */
-            font-size: 14px;   /* Smaller font size */
+            width: 30px;
+            height: 30px;
+            font-size: 14px;
             text-align: center;
             border: none;
             background-color: #666;
             color: white;
             border-radius: 50%;
             cursor: pointer;
-            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2); /* Smaller shadow */
+            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
             transition: background-color 0.2s, transform 0.1s;
         }
         #dpad button:hover {
@@ -123,7 +122,7 @@
         }
         #title {
             text-align: center;
-            font-size: 24px; /* Smaller title */
+            font-size: 24px;
             font-weight: bold;
             margin-top: 20px;
             color: white;
@@ -366,28 +365,48 @@
 
         const MOVE_STEP = 10;
 
+        function isColliding(newX, newY) {
+            for (const obstacle of obstacles) {
+                if (newX + sensor.radius > obstacle.x &&
+                    newX - sensor.radius < obstacle.x + obstacle.width &&
+                    newY + sensor.radius > obstacle.y &&
+                    newY - sensor.radius < obstacle.y + obstacle.height) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         moveUp.addEventListener('click', () => {
-            sensor.y -= MOVE_STEP;
-            if (sensor.y < 0) sensor.y = 0;
-            redrawCanvas();
+            const newY = sensor.y - MOVE_STEP;
+            if (newY - sensor.radius >= 0 && !isColliding(sensor.x, newY)) {
+                sensor.y = newY;
+                redrawCanvas();
+            }
         });
 
         moveDown.addEventListener('click', () => {
-            sensor.y += MOVE_STEP;
-            if (sensor.y > canvas.height) sensor.y = canvas.height;
-            redrawCanvas();
+            const newY = sensor.y + MOVE_STEP;
+            if (newY + sensor.radius <= canvas.height && !isColliding(sensor.x, newY)) {
+                sensor.y = newY;
+                redrawCanvas();
+            }
         });
 
         moveLeft.addEventListener('click', () => {
-            sensor.x -= MOVE_STEP;
-            if (sensor.x < 0) sensor.x = 0;
-            redrawCanvas();
+            const newX = sensor.x - MOVE_STEP;
+            if (newX - sensor.radius >= 0 && !isColliding(newX, sensor.y)) {
+                sensor.x = newX;
+                redrawCanvas();
+            }
         });
 
         moveRight.addEventListener('click', () => {
-            sensor.x += MOVE_STEP;
-            if (sensor.x > canvas.width) sensor.x = canvas.width;
-            redrawCanvas();
+            const newX = sensor.x + MOVE_STEP;
+            if (newX + sensor.radius <= canvas.width && !isColliding(newX, sensor.y)) {
+                sensor.x = newX;
+                redrawCanvas();
+            }
         });
     </script>
 </body>
